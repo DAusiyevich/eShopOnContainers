@@ -52,6 +52,7 @@ services:
       - WebShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
       - WebhooksApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
       - WebhooksWebClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
+      - CouponApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5203
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
@@ -83,7 +84,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_AZURE_MONGO_COUPON_DB}
       - identityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
@@ -94,11 +94,10 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
       - PATH_BASE=/coupon-api
-      - GRPC_PORT=81
+      - ConnectionString=mongodb://nosqldata:27017
       - PORT=80
     ports:
       - "5203:80"
-      - "9203:81"
 
   catalog-api:
     environment:

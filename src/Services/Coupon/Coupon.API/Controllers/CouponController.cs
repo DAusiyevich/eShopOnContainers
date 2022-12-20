@@ -1,11 +1,13 @@
 ﻿using Coupon.API.DTOs;
 using Coupon.API.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Coupon.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class CouponController: ControllerBase
     {
         private ICouponRepository _couponRepository;

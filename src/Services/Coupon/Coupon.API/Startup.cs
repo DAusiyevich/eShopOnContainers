@@ -33,21 +33,12 @@ namespace Coupon.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            //services.AddGrpc(options =>
-            //{
-            //    options.EnableDetailedErrors = true;
-            //});
-
             RegisterAppInsights(services);
 
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                //options.Filters.Add(typeof(ValidateModelStateFilter));
-
-            }) // Added for functional tests
-                .AddApplicationPart(typeof(CouponController).Assembly)
-                .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true);
+            });
 
             services.AddSwaggerGen(options =>
             {
@@ -68,9 +59,9 @@ namespace Coupon.API
                             AuthorizationUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
                             TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
                             Scopes = new Dictionary<string, string>()
-                        {
-                            { "basket", "Basket API" }
-                        }
+                            {
+                                { "coupon", "Coupon API" }
+                            }
                         }
                     }
                 });
@@ -83,21 +74,6 @@ namespace Coupon.API
             services.AddCustomHealthCheck(Configuration);
 
             services.Configure<CouponSettings>(Configuration);
-
-            //By connecting here we are making sure that our service
-            //cannot start until redis is ready. This might slow down startup,
-            //but given that there is a delay on resolving the ip address
-            //and then creating the connection it seems reasonable to move
-            //that cost to startup instead of having the first request pay the
-            //penalty.
-            //services.AddSingleton<ConnectionMultiplexer>(sp =>
-            //{
-            //    var settings = sp.GetRequiredService<IOptions<CouponSettings>>().Value;
-            //    var configuration = ConfigurationOptions.Parse(settings.ConnectionString, true);
-
-            //    return ConnectionMultiplexer.Connect(configuration);
-            //});
-
 
             if (Configuration.GetValue<bool>("AzureServiceBusEnabled"))
             {
@@ -186,7 +162,7 @@ namespace Coupon.API
             {
                 options.Authority = identityUrl;
                 options.RequireHttpsMetadata = false;
-                options.Audience = "basket";
+                options.Audience = "coupon";
             });
         }
 
@@ -246,9 +222,9 @@ namespace Coupon.API
             app.UseSwagger()
                 .UseSwaggerUI(setup =>
                 {
-                    setup.SwaggerEndpoint($"{(!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty)}/swagger/v1/swagger.json", "1Basket.API V1");
-                    setup.OAuthClientId("basketswaggerui");
-                    setup.OAuthAppName("Basket Swagger UI");
+                    setup.SwaggerEndpoint($"{(!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty)}/swagger/v1/swagger.json", "Coupon.API V1");
+                    setup.OAuthClientId("couponswaggerui");
+                    setup.OAuthAppName("Coupon Swagger UI");
                 });
 
             app.UseRouting();
@@ -259,32 +235,17 @@ namespace Coupon.API
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapGrpcService<BasketService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
-                //endpoints.MapGet("/_proto/", async ctx =>
-                //{
-                //    ctx.Response.ContentType = "text/plain";
-                //    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "basket.proto"), FileMode.Open, FileAccess.Read);
-                //    using var sr = new StreamReader(fs);
-                //    while (!sr.EndOfStream)
-                //    {
-                //        var line = await sr.ReadLineAsync();
-                //        if (line != "/* >>" || line != "<< */")
-                //        {
-                //            await ctx.Response.WriteAsync(line);
-                //        }
-                //    }
-                //});
                 endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
                 {
                     Predicate = _ => true,
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+                }).AllowAnonymous();
                 endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
                 {
                     Predicate = r => r.Name.Contains("self")
-                });
+                }).AllowAnonymous();
             });
 
             ConfigureEventBus(app);

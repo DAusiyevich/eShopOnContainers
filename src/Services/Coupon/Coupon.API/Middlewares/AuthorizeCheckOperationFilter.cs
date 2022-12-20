@@ -26,7 +26,7 @@ namespace Coupon.API.Middlewares
             {
                 new()
                 {
-                    [ oAuthScheme ] = new [] { "basketapi" }
+                    [ oAuthScheme ] = new [] { "couponapi" }
                 }
             };
         }
