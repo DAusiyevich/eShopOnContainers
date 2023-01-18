@@ -34,10 +34,16 @@ public record UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
 
     public string CouponCode { get; set; }
 
+    public decimal CouponValue { get; set; }
+
+    public int PointsUsed { get; set; }
+
+    public int Discount { get; set; }
+
     public UserCheckoutAcceptedIntegrationEvent(string userId, string userName, string city, string street,
         string state, string country, string zipCode, string cardNumber, string cardHolderName,
         DateTime cardExpiration, string cardSecurityNumber, int cardTypeId, string buyer, Guid requestId,
-        CustomerBasket basket, string couponCode = null)
+        CustomerBasket basket, string couponCode = null, decimal couponValue = 0, int pointsUsed = 0, int discount = 0)
     {
         UserId = userId;
         City = city;
@@ -55,6 +61,8 @@ public record UserCheckoutAcceptedIntegrationEvent : IntegrationEvent
         RequestId = requestId;
         UserName = userName;
         CouponCode = couponCode;
+        CouponValue = couponValue;
+        PointsUsed = pointsUsed;
+        Discount = discount;
     }
-
 }

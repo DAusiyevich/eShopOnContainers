@@ -16,7 +16,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Client\src\modules\orders\orders-new\orders-new.component.ts~RF679247d2.TMP" />
       <None Remove="Client\src\modules\shared\models\coupon.model.ts" />
+      <None Remove="Client\src\modules\shared\models\customerLoyalty.ts" />
+      <None Remove="Client\src\modules\shared\models\tier.model.ts" />
+      <None Remove="Client\src\modules\shared\services\coupon.service.ts" />
     </ItemGroup>
 
     <ItemGroup>
@@ -53,6 +57,9 @@
 
     <ItemGroup>
       <TypeScriptCompile Include="Client\src\modules\shared\models\coupon.model.ts" />
+      <TypeScriptCompile Include="Client\src\modules\shared\models\customerLoyalty.ts" />
+      <TypeScriptCompile Include="Client\src\modules\shared\models\tier.model.ts" />
+      <TypeScriptCompile Include="Client\src\modules\shared\services\coupon.service.ts" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

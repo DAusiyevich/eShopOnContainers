@@ -54,7 +54,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                         "basket",
                         "webshoppingagg",
                         "orders.signalrhub",
-                        "webhooks"
+                        "webhooks",
+                        "coupon"
                     },
                 },
                 new Client

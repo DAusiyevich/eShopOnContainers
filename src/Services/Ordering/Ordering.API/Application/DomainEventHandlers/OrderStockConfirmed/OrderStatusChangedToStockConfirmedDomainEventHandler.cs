@@ -29,10 +29,10 @@ public class OrderStatusChangedToStockConfirmedDomainEventHandler
                 orderStatusChangedToStockConfirmedDomainEvent.OrderId, nameof(OrderStatus.StockConfirmed), OrderStatus.StockConfirmed.Id);
 
         var order = await _orderRepository.GetAsync(orderStatusChangedToStockConfirmedDomainEvent.OrderId);
-        //var buyer = await _buyerRepository.FindByIdAsync(order.GetBuyerId.Value.ToString());
+        var buyer = await _buyerRepository.FindByIdAsync(order.GetBuyerId.Value.ToString());
 
         var orderStatusChangedToAwaitingCouponValidationIntegrationEvent =
-            new OrderStatusChangedToAwaitingCouponValidationIntegrationEvent(order.Id, order.CouponCode);
+            new OrderStatusChangedToAwaitingCouponValidationIntegrationEvent(order.Id, order.CouponCode, order.PointsUsed, buyer.IdentityGuid);
         await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStatusChangedToAwaitingCouponValidationIntegrationEvent);
 
         //var orderStatusChangedToStockConfirmedIntegrationEvent = new OrderStatusChangedToStockConfirmedIntegrationEvent(order.Id, order.OrderStatus.Name, buyer.Name);

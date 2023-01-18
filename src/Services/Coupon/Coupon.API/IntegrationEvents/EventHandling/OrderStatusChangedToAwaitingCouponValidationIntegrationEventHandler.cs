@@ -1,6 +1,7 @@
 ﻿using Coupon.API.Infrastructure;
 using Coupon.API.IntegrationEvents.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using MongoDB.Driver;
 
 namespace Coupon.API.IntegrationEvents.EventHandling
 {
@@ -8,50 +9,53 @@ namespace Coupon.API.IntegrationEvents.EventHandling
         : IIntegrationEventHandler<OrderStatusChangedToAwaitingCouponValidationIntegrationEvent>
     {
         private readonly ILogger<OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler> _logger;
-        private readonly ICouponRepository _repository;
+        private readonly EShopContext _eshopContext;
         private readonly IEventBus _eventBus;
 
         public OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler(
             ILogger<OrderStatusChangedToAwaitingCouponValidationIntegrationEventHandler> logger,
-            ICouponRepository repository,
+            EShopContext eshopContext,
             IEventBus eventBus)
         {
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
-            _repository = repository ?? throw new System.ArgumentNullException(nameof(repository));
+            _eshopContext = eshopContext ?? throw new System.ArgumentNullException(nameof(eshopContext));
             _eventBus = eventBus ?? throw new System.ArgumentNullException(nameof(eventBus));
         }
 
         public async Task Handle(OrderStatusChangedToAwaitingCouponValidationIntegrationEvent @event)
         {
-            var coupon = await _repository.FindByCodeAsync(@event.CouponCode);
-            //add validation of coupon as string
-            if (coupon == null)
-            {
-                var newCoupon = new Infrastructure.Models.Coupon
-                {
-                    Code = @event.CouponCode,
-                    Consumed = true,
-                    Discount = int.Parse(@event.CouponCode.Split("-").Last()),
-                    OrderId = @event.OrderId
-                };
+            var isNoCoupon = string.IsNullOrEmpty(@event.CouponCode);
+            var isNoPointsUsed = @event.PointsUsed == 0;
+            var coupon = await _eshopContext.CouponsCollection
+                                                .Find(x => string.Equals(x.Code, @event.CouponCode) && !x.Consumed)
+                                                .FirstOrDefaultAsync();
 
-                await _repository.AddAsync(newCoupon);
+            var customer = await _eshopContext.CustomersCollection
+                                                            .Find(x => string.Equals(x.CustomerId, @event.UserId))
+                                                            .FirstOrDefaultAsync();
+
+            if ((isNoCoupon || coupon != null) && (isNoPointsUsed || customer.PointsAvaliable >= @event.PointsUsed))
+            {
+                if (!isNoCoupon)
+                {
+                    coupon.Consumed = true;
+                    coupon.OrderId = @event.OrderId;
+                    await _eshopContext.CouponsCollection.ReplaceOneAsync(x => x.Id == coupon.Id, coupon);
+                }
+
+                if (!isNoPointsUsed)
+                {
+                    customer.PointsAvaliable -= @event.PointsUsed;
+                    await _eshopContext.CustomersCollection.ReplaceOneAsync(x => x.Id == customer.Id, customer);
+                }
+
                 var orderCouponConfirmedIntegrationEvent = new OrderCouponConfirmedIntegrationEvent(@event.OrderId);
                 _eventBus.Publish(orderCouponConfirmedIntegrationEvent);
-            }
-            else if (coupon.Consumed)
-            {
-                var orderCouponRejectedIntegrationEvent = new OrderCouponRejectedIntegrationEvent(@event.OrderId);
-                _eventBus.Publish(orderCouponRejectedIntegrationEvent);
             }
             else
             {
-                coupon.Consumed = true;
-                coupon.OrderId = @event.OrderId;
-                await _repository.UpdateAsync(coupon);
-
-                var orderCouponConfirmedIntegrationEvent = new OrderCouponConfirmedIntegrationEvent(@event.OrderId);
-                _eventBus.Publish(orderCouponConfirmedIntegrationEvent);
+                var orderCouponRejectedIntegrationEvent = new OrderCouponRejectedIntegrationEvent(@event.OrderId);
+                _eventBus.Publish(orderCouponRejectedIntegrationEvent);
             }
         }
     }

@@ -43,7 +43,7 @@ COPY "Web/WebStatus/WebStatus.csproj" "Web/WebStatus/WebStatus.csproj"
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 
 COPY "NuGet.config" "NuGet.config"
-
+COPY "Services/Coupon/Coupon.API/Coupon.API.csproj" "Services/Coupon/Coupon.API/Coupon.API.csproj"
 # RUN dotnet restore "eShopOnContainers-ServicesAndWebApps.sln"
 COPY . .
 WORKDIR /src/Web/WebStatus

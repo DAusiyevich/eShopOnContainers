@@ -6,9 +6,13 @@ namespace Coupon.API.IntegrationEvents.Events
     {
         public int OrderId { get; set; }
 
+        public string UserId { get; set; }
+
         public string CouponCode { get; init; }
 
-        public OrderStatusChangedToAwaitingCouponValidationIntegrationEvent(int orderId, string couponCode)
-            => (OrderId, CouponCode) = (orderId, couponCode);
+        public int PointsUsed { get; init; }
+
+        public OrderStatusChangedToAwaitingCouponValidationIntegrationEvent(int orderId, string couponCode, int pointsUsed, string userId)
+            => (OrderId, CouponCode, PointsUsed, UserId) = (orderId, couponCode, pointsUsed, userId);
     }
 }

@@ -84,12 +84,28 @@
                 </div>
             </article>
 
+            <div class="d-flex align-items-center justify-content-start mt-4 text-uppercase">
+                <div>Your loyalty tier is:</div>
+                <div class="ml-1">{{customerLoyalty?.loyaltyTier.name}}</div>
+            </div>
+            <div class="d-flex align-items-center justify-content-start mb-4 text-uppercase">
+                <div>Discount:</div>
+                <div class="ml-1">{{customerLoyalty?.loyaltyTier.discount}} %</div>
+            </div>
+
             <div class="d-flex align-items-center justify-content-end mt-4 mb-4 text-uppercase">
                 <div>Subtotal</div>
                 <div class="ml-3">${{order.total | number:'.2-2'}}</div>
             </div>
 
-            <div class="d-flex flex-nowrap justify-content-between align-items-center mb-3 mt-3">
+            <div class="d-flex align-items-center justify-content-end text-uppercase">
+                <div *ngIf="customerLoyalty?.loyaltyTier.discount > 0">- {{customerLoyalty?.loyaltyTier.discount}} %</div>
+                <div>
+                    <div class="text-right ml-3" *ngIf="customerLoyalty?.loyaltyTier.discount > 0">-${{discountValue | number:'.2-2'}}</div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-nowrap justify-content-between align-items-center mb-1 mt-1">
                 <div>
                     <div *ngIf="!coupon">
                         <div class="u-text-uppercase">Have a discount code?</div>
@@ -116,9 +132,35 @@
                 </div>
             </div>
 
+            <div class="d-flex flex-nowrap justify-content-between align-items-center mb-3 mt-1">
+                <div>
+                    <div *ngIf="pointsUsed == 0">
+                        <div class="u-text-uppercase">You have {{customerLoyalty?.pointsAvaliable}} points</div>
+                        <div class="d-flex flex-nowrap justify-content-between align-items-center mt-1">
+                            <input #pointsUsed
+                                   class="esh-orders_new-coupon mr-2 form-control"
+                                   type="text"
+                                   placeholder="Enter points"
+                                   (keydown)="keyDownApplyPaymnetWithPoints($event, pointsUsed.value)">
+                            <button type="button"
+                                    (click)="applyPaymnetWithPoints(pointsUsed.value)"
+                                    class="btn btn-secondary u-minwidth-unset">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-end text-uppercase">
+                    <div *ngIf="pointsUsed > 0">Discount from points</div>
+                    <div>
+                        <div class="text-right ml-3" *ngIf="pointsUsed > 0">-${{pointsUsed / 100 | number:'.2-2'}}</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="divider d-flex align-items-center justify-content-end mb-4 pt-4 text-uppercase u-text-xl">
                 <div>Total</div>
-                <div class="ml-3">${{ order.total - coupon?.discount | number:'.2-2'}}</div>
+                <div class="ml-3">${{ order.total - discountValue - pointsUsed / 100 - coupon?.discount | number:'.2-2'}}</div>
             </div>
 
             <div class="esh-orders_new-buttons d-flex justify-content-end align-items-center">

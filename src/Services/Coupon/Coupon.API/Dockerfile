@@ -40,10 +40,9 @@ COPY "Web/WebhookClient/WebhookClient.csproj" "Web/WebhookClient/WebhookClient.c
 COPY "Web/WebMVC/WebMVC.csproj" "Web/WebMVC/WebMVC.csproj"
 COPY "Web/WebSPA/WebSPA.csproj" "Web/WebSPA/WebSPA.csproj"
 COPY "Web/WebStatus/WebStatus.csproj" "Web/WebStatus/WebStatus.csproj"
-
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
-
 COPY "NuGet.config" "NuGet.config"
+COPY "Services/Coupon/Coupon.API/Coupon.API.csproj" "Services/Coupon/Coupon.API/Coupon.API.csproj"
 
 RUN dotnet restore "eShopOnContainers-ServicesAndWebApps.sln"
 

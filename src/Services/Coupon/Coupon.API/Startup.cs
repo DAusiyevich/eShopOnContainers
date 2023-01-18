@@ -129,7 +129,7 @@ namespace Coupon.API
                     .AllowCredentials());
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<ICouponRepository, CouponRepository>();
+            services.AddScoped<EShopContext>();
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();

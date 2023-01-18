@@ -72,6 +72,19 @@ static_resources:
                 route:
                   auto_host_rewrite: true
                   cluster: basket
+              - name: "co-short"
+                match:
+                  prefix: "/co/"
+                route:
+                  auto_host_rewrite: true
+                  prefix_rewrite: "/coupon-api/"
+                  cluster: coupon
+              - name: "co-long"
+                match:
+                  prefix: "/coupon-api/"
+                route:
+                  auto_host_rewrite: true
+                  cluster: coupon
               - name: "agg"
                 match:
                   prefix: "/"
@@ -123,6 +136,14 @@ static_resources:
     hosts:
     - socket_address:
         address: basket-api
+        port_value: 80
+  - name: coupon
+    connect_timeout: 0.25s
+    type: strict_dns
+    lb_policy: round_robin
+    hosts:
+    - socket_address:
+        address: coupon-api
         port_value: 80
   - name: ordering
     connect_timeout: 0.25s

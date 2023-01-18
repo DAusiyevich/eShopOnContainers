@@ -14,4 +14,7 @@
     ordernumber: string;
     total: number;
     couponCode: string;
+    couponValue: number;
+    pointsUsed: number;
+    discount: number;
 }

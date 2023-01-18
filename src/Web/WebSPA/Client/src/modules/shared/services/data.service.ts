@@ -14,6 +14,7 @@ export class DataService {
     constructor(private http: HttpClient, private securityService: SecurityService) { }
 
     get(url: string, params?: any): Observable<Response> {
+        debugger;
         let options = { };
         this.setHeaders(options);
         

@@ -1,4 +1,7 @@
-﻿namespace Coupon.API.Middlewares
+﻿using Microsoft.Extensions.Hosting;
+using Polly;
+
+namespace Coupon.API.Middlewares
 {
     public static class WebHostBuildertExtensions
     {

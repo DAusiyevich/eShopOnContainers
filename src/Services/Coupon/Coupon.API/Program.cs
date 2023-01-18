@@ -5,6 +5,8 @@ using System.Net;
 using Serilog;
 using Coupon.API;
 using Azure.Identity;
+using Coupon.API.Middlewares;
+using Coupon.API.Infrastructure;
 
 var configuration = GetConfiguration();
 
@@ -13,7 +15,8 @@ Log.Logger = CreateSerilogLogger(configuration);
 try
 {
     Log.Information("Configuring web host ({ApplicationContext})...", Program.AppName);
-    var host = BuildWebHost(configuration, args);
+    var host = BuildWebHost(configuration, args)
+                    .SeedDatabase<EShopContext>(context => new EShopSeeder(context).SeedCouponAsync().Wait());
 
     Log.Information("Starting web host ({ApplicationContext})...", Program.AppName);
     host.Run();
