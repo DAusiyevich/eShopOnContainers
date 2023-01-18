@@ -13,6 +13,14 @@ public class Order
     // Address is a Value Object pattern example persisted as EF Core 2.0 owned entity
     public Address Address { get; private set; }
 
+    public string CouponCode { get; private set; }
+
+    public decimal CouponValue { get; private set; }
+
+    public int PointsUsed { get; private set; }
+
+    public int Discount { get; private set; }
+
     public int? GetBuyerId => _buyerId;
     private int? _buyerId;
 
@@ -49,13 +57,18 @@ public class Order
     }
 
     public Order(string userId, string userName, Address address, int cardTypeId, string cardNumber, string cardSecurityNumber,
-            string cardHolderName, DateTime cardExpiration, int? buyerId = null, int? paymentMethodId = null) : this()
+            string cardHolderName, DateTime cardExpiration, int? buyerId = null, int? paymentMethodId = null, string couponCode = null,
+            decimal couponValue = 0, int pointsUsed = 0, int discount = 0) : this()
     {
         _buyerId = buyerId;
         _paymentMethodId = paymentMethodId;
         _orderStatusId = OrderStatus.Submitted.Id;
         _orderDate = DateTime.UtcNow;
         Address = address;
+        CouponCode = couponCode;
+        CouponValue = couponValue;
+        PointsUsed = pointsUsed;
+        Discount = discount;
 
         // Add the OrderStarterDomainEvent to the domain events collection 
         // to be raised/dispatched when comitting changes into the Database [ After DbContext.SaveChanges() ]

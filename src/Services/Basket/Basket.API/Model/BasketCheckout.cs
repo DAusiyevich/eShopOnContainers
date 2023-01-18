@@ -25,4 +25,12 @@ public class BasketCheckout
     public string Buyer { get; set; }
 
     public Guid RequestId { get; set; }
+
+    public string CouponCode { get; set; }
+
+    public decimal CouponValue { get; set; }
+
+    public int PointsUsed { get; set; }
+
+    public int Discount { get; set; }
 }

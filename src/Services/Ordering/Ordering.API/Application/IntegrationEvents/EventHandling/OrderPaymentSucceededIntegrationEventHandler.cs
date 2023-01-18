@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API.Application.IntegrationEvents.EventHandling;
+﻿using Ordering.API.Application.Commands;
+
+namespace Microsoft.eShopOnContainers.Services.Ordering.API.Application.IntegrationEvents.EventHandling;
    
 public class OrderPaymentSucceededIntegrationEventHandler :
     IIntegrationEventHandler<OrderPaymentSucceededIntegrationEvent>
@@ -30,6 +32,9 @@ public class OrderPaymentSucceededIntegrationEventHandler :
                 command);
 
             await _mediator.Send(command);
+
+            var assignPointsCommand = new AssignPointsCommand(@event.OrderId);
+            await _mediator.Send(assignPointsCommand);
         }
     }
 }

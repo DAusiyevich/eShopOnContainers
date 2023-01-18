@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Ordering.API.Application.DomainEventHandlers.OrderStockConfirmed;
+﻿using Ordering.API.Application.IntegrationEvents.Events;
+
+namespace Microsoft.eShopOnContainers.Services.Ordering.API.Application.DomainEventHandlers.OrderStockConfirmed;
 
 public class OrderStatusChangedToStockConfirmedDomainEventHandler
                 : INotificationHandler<OrderStatusChangedToStockConfirmedDomainEvent>
@@ -29,7 +31,11 @@ public class OrderStatusChangedToStockConfirmedDomainEventHandler
         var order = await _orderRepository.GetAsync(orderStatusChangedToStockConfirmedDomainEvent.OrderId);
         var buyer = await _buyerRepository.FindByIdAsync(order.GetBuyerId.Value.ToString());
 
-        var orderStatusChangedToStockConfirmedIntegrationEvent = new OrderStatusChangedToStockConfirmedIntegrationEvent(order.Id, order.OrderStatus.Name, buyer.Name);
-        await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStatusChangedToStockConfirmedIntegrationEvent);
+        var orderStatusChangedToAwaitingCouponValidationIntegrationEvent =
+            new OrderStatusChangedToAwaitingCouponValidationIntegrationEvent(order.Id, order.CouponCode, order.PointsUsed, buyer.IdentityGuid);
+        await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStatusChangedToAwaitingCouponValidationIntegrationEvent);
+
+        //var orderStatusChangedToStockConfirmedIntegrationEvent = new OrderStatusChangedToStockConfirmedIntegrationEvent(order.Id, order.OrderStatus.Name, buyer.Name);
+        //await _orderingIntegrationEventService.AddAndSaveEventAsync(orderStatusChangedToStockConfirmedIntegrationEvent);
     }
 }

@@ -11,6 +11,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
             {
                 new ApiResource("orders", "Orders Service"),
                 new ApiResource("basket", "Basket Service"),
+                new ApiResource("coupon", "Coupon Service"),
                 new ApiResource("mobileshoppingagg", "Mobile Shopping Aggregator"),
                 new ApiResource("webshoppingagg", "Web Shopping Aggregator"),
                 new ApiResource("orders.signalrhub", "Ordering Signalr Hub"),
@@ -53,7 +54,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                         "basket",
                         "webshoppingagg",
                         "orders.signalrhub",
-                        "webhooks"
+                        "webhooks",
+                        "coupon"
                     },
                 },
                 new Client
@@ -261,7 +263,22 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                     {
                         "webhooks"
                     }
-                }
+                },
+                new Client
+                {
+                    ClientId = "couponswaggerui",
+                    ClientName = "Coupon Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"{clientsUrl["CouponApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{clientsUrl["CouponApi"]}/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "coupon"
+                    }
+                },
             };
         }
     }

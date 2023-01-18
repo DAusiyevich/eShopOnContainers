@@ -8,10 +8,11 @@ import { OrdersNewComponent }      from './orders-new/orders-new.component';
 import { OrdersService } from './orders.service';
 import { BasketService } from '../basket/basket.service';
 import { Header }                from '../shared/components/header/header';
+import { CouponService } from '../shared/services/coupon.service';
 
 @NgModule({
     imports: [BrowserModule, SharedModule],
     declarations: [OrdersComponent, OrdersDetailComponent, OrdersNewComponent],
-    providers: [OrdersService, BasketService]
+    providers: [OrdersService, BasketService, CouponService]
 })
 export class OrdersModule { }

@@ -7,6 +7,7 @@ import { IOrderDetail } from "../shared/models/order-detail.model";
 import { SecurityService } from '../shared/services/security.service';
 import { ConfigurationService } from '../shared/services/configuration.service';
 import { BasketWrapperService } from '../shared/services/basket.wrapper.service';
+import { ICoupon } from '../shared/models/coupon.model';
 
 import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
@@ -89,6 +90,5 @@ export class OrdersService {
 
         return order;
     }
-
 }
 
